@@ -1,15 +1,11 @@
 // Утилитарные функции
 
-// Функция возвращает случайное целое число
-const getRandomIntegrity = (min, max) => {
-  const rand = min - 0.5 + Math.random() * (max - min + 1);
-  return Math.abs(Math.round(rand));
+// Функция возвращает случайное целое число или число с плавающей точкой
+const getRandomNumber = (min, max, floatNumber) => {
+  if (min >= 0 && max >= 0 && min < max && floatNumber >= 0 || floatNumber === undefined) {
+    const rand = (Math.random() * (max - min) + min).toFixed(floatNumber);
+    return Number(rand);
+  }
+  return 0; // диапазон указан некорректно
 };
-getRandomIntegrity(-1, 3);
-
-// Функция возвращает случайное число с плавающей точкой
-const getRandomFloat = (min, max, floatNumber) => {
-  const randomNum = (Math.random() * (max - min) + min).toFixed(Math.abs(floatNumber));
-  return Math.abs(randomNum);
-};
-getRandomFloat(-1, 2, -5);
+getRandomNumber(0.4, 2.5, 5);
