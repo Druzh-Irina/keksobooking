@@ -1,3 +1,4 @@
+/*
 // Функция взята из интернета и доработана
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 
@@ -20,3 +21,4 @@ function getRandomPositiveFloat (a, b, digits = 1) {
   // указать требуемое количество знаков после точки
   return result.toFixed(digits);
 }
+*/
