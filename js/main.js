@@ -1,19 +1,5 @@
 const SIMILAR_AD_COUNT = 10;
 
-const AVATARS = [
-  'img/avatars/user01.png',
-  'img/avatars/user02.png',
-  'img/avatars/user03.png',
-  'img/avatars/user04.png',
-  'img/avatars/user05.png',
-  'img/avatars/user06.png',
-  'img/avatars/user07.png',
-  'img/avatars/user08.png',
-  'img/avatars/user09.png',
-  'img/avatars/user10.png',
-  'img/avatars/user11.png',
-];
-
 const TITLES = [
   'Невероятно горячее предложение',
   'Бесплатная отмена бронирования',
@@ -78,12 +64,13 @@ const getRandomElement = (element) => {
   return element[randomElement];
 };
 
-// Функция возвращает неповторяющееся случайное значение из массива
-const getUniqueRandomElement = (array) => {
-  const randomElement = getRandomInt(0, array.length - 1);
-  const randomElementItem = array[randomElement];
-  array.splice(randomElement, 1);
-  return randomElementItem;
+let number = 1;
+// Функция возвращает строку с неповторяющемся значенинием
+const getUniqueAvatarNumber = (avatarNumber) => {
+  for (let i = number; i <= 10; i++) {
+    number = avatarNumber < 10 ? `0${avatarNumber}` : avatarNumber;
+    return `img/avatars/user${number}.png`;
+  }
 };
 
 //Функция возвращает массив случайной длины из случайных неповторяющихся значений
@@ -101,7 +88,7 @@ const createAd = () => {
 
   return {
     author: {
-      avatar: getUniqueRandomElement(AVATARS),
+      avatar: getUniqueAvatarNumber(number),
     },
     offer: {
       title: getRandomElement(TITLES),
