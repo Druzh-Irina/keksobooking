@@ -64,12 +64,16 @@ const getRandomElement = (element) => {
   return element[randomElement];
 };
 
-let number = 1;
-// Функция возвращает строку с неповторяющемся значенинием
-const getUniqueAvatarNumber = (avatarNumber) => {
-  for (let i = number; i <= 10; i++) {
-    number = avatarNumber < 10 ? `0${avatarNumber}` : avatarNumber;
-    return `img/avatars/user${number}.png`;
+
+// Функция возвращает строку с неповторяющимся значением
+let number = 0;
+const getUniqueAvatarNumber = () => {
+  for (let i = 1; i <= SIMILAR_AD_COUNT; i++) {
+    number += 1;
+    if (number < 10) {
+      return`img/avatars/user0${number}.png`;
+    }
+    return`img/avatars/user${number}.png`;
   }
 };
 
@@ -88,7 +92,7 @@ const createAd = () => {
 
   return {
     author: {
-      avatar: getUniqueAvatarNumber(number),
+      avatar: getUniqueAvatarNumber(),
     },
     offer: {
       title: getRandomElement(TITLES),
