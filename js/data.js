@@ -1,6 +1,26 @@
-import {getRandomInt, getRandomFloat, getRandomElement, getRandomArray} from './util.js';
+import {
+  getRandomInt,
+  getRandomFloat,
+  getRandomElement,
+  getUniqueRandomElement,
+  getRandomArray
+} from './util.js';
 
 const SIMILAR_AD_COUNT = 10;
+
+const AVATARS = [
+  'img/avatars/user01.png',
+  'img/avatars/user02.png',
+  'img/avatars/user03.png',
+  'img/avatars/user04.png',
+  'img/avatars/user05.png',
+  'img/avatars/user06.png',
+  'img/avatars/user07.png',
+  'img/avatars/user08.png',
+  'img/avatars/user09.png',
+  'img/avatars/user10.png',
+  'img/avatars/user11.png',
+];
 
 const TITLES = [
   'Невероятно горячее предложение',
@@ -45,19 +65,6 @@ const PHOTOS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-// Функция возвращает строку с неповторяющимся значением
-let avatarCount = 0;
-
-const getUniqueAvatar = () => {
-  for (let i = 1; i <= SIMILAR_AD_COUNT; i++) {
-    avatarCount += 1;
-    if (avatarCount < 10) {
-      return `img/avatars/user0${avatarCount}.png`;
-    }
-    return `img/avatars/user${avatarCount}.png`;
-  }
-};
-
 // Функция создает одно объявление
 const createAd = () => {
   const x = getRandomFloat(35.65000, 35.70000, 5);
@@ -65,7 +72,7 @@ const createAd = () => {
 
   return {
     author: {
-      avatar: getUniqueAvatar(),
+      avatar: getUniqueRandomElement(AVATARS),
     },
     offer: {
       title: getRandomElement(TITLES),
@@ -87,7 +94,7 @@ const createAd = () => {
   };
 };
 
-// Генерация 10-ти случайных объявлений
+// Генерация 10-ти случайных объявлений from './data.js';
 const similarAds = new Array(SIMILAR_AD_COUNT).fill(null).map(() => createAd());
 
-export {similarAds};
+export { similarAds };
