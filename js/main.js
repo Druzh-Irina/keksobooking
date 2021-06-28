@@ -1,3 +1,2 @@
-import {similarAds} from './data.js';
-
-similarAds;
+import './card.js';
+import './form.js';
