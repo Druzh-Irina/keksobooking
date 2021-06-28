@@ -10,13 +10,13 @@ const disablePage = () => {
   adForm.classList.add('ad-form--disabled');
 
   mapFormSelects.forEach((element) => {
-    element.setAttribute('disabled', '');
+    element.disabled = true;
   });
 
-  mapFormFieldset.setAttribute('disabled', '');
+  mapFormFieldset.disabled = true;
 
   adFormFieldsets.forEach((element) => {
-    element.setAttribute('disabled', '');
+    element.disabled = true;
   });
 };
 
@@ -28,16 +28,16 @@ const activatePage = () => {
   adForm.classList.remove('ad-form--disabled');
 
   mapFormSelects.forEach((element) => {
-    element.removeAttribute('disabled');
+    element.disabled = false;
   });
 
-  mapFormFieldset.removeAttribute('disabled');
+  mapFormFieldset.disabled = false;
 
   adFormFieldsets.forEach((element) => {
-    element.removeAttribute('disabled');
+    element.disabled = false;
   });
 };
 
-activatePage();
+activatePage ();
 
 export { disablePage, activatePage };
