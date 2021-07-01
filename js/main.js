@@ -1,3 +1,3 @@
 import './card.js';
-import './form.js';
-
+import './form-change-page.js';
+import './form-validation.js';
