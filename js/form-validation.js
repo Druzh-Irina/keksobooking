@@ -1,6 +1,6 @@
 import {
   adForm
-} from './form-change-page.js';
+} from './toggle-page-state.js';
 
 const MIN_PRICE_OF_TYPE = {
   bungalow: '0',
