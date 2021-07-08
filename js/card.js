@@ -1,7 +1,3 @@
-import {
-  similarAds
-} from './data.js';
-
 const TYPES_OF_HOUSING = {
   flat: 'Квартира',
   bungalow: 'Бунгало',
@@ -62,7 +58,8 @@ const renderCard = (element) => {
   card.querySelector('.popup__text--address').textContent = element.offer.address;
   card.querySelector('.popup__text--price').textContent = `${element.offer.price} ₽/ночь`;
   card.querySelector('.popup__type').textContent = TYPES_OF_HOUSING[element.offer.type];
-  card.querySelector('.popup__text--capacity').textContent = `${element.offer.rooms} комнаты для ${element.offer.guests} гостей`;
+
+  card.querySelector('.popup__text--capacity').textContent = `${element.offer.rooms} комнат для ${element.offer.guests} гостей`;
   card.querySelector('.popup__text--time').textContent = `Заезд после ${element.offer.checkin}, выезд до ${element.offer.checkout}`;
 
   const featureCard = card.querySelector('.popup__features');
@@ -79,10 +76,6 @@ const renderCard = (element) => {
 
   return card;
 };
-
-// Отрисовка первого[0] сгенерированного DOM-элемента в блок #map-canvas
-const map = document.querySelector('#map-canvas');
-map.appendChild(renderCard(similarAds[0]));
 
 export {
   renderCard
