@@ -1,6 +1,9 @@
-const mapForm = document.querySelector('.map__filters');
-const mapFormBlocks = mapForm.children;
+// dry код (form.js - строки 38 и 39)!!!!!!!
+const filterForm = document.querySelector('.map__filters');
 const adForm = document.querySelector('.ad-form');
+
+// fieldset и select в формах ".ad-form" и ".map__filters"
+const mapFormBlocks = filterForm.children;
 const adFormBlocks = adForm.children;
 
 // Блокировка полей в формах
@@ -9,9 +12,9 @@ const setDisabled = (elements) => {
     element.disabled = true;
   }
 };
-// Неактивное состояние страницы
+// Неактивное состояние страницы: формы "Ваше объявление" и фильтра для карты
 const disablePage = () => {
-  mapForm.classList.add('map__filters--disabled');
+  filterForm.classList.add('map__filters--disabled');
   setDisabled(mapFormBlocks);
   adForm.classList.add('ad-form--disabled');
   setDisabled(adFormBlocks);
@@ -26,17 +29,20 @@ const setEnabled = (elements) => {
   }
 };
 
-// Активное состояние страницы
-
-const activatePage = () => {
-  mapForm.classList.remove('map__filters--disabled');
-  setEnabled(mapFormBlocks);
+// Активное состояние формы "Ваше объявление"
+const activateAd = () => {
   adForm.classList.remove('ad-form--disabled');
   setEnabled(adFormBlocks);
 };
 
+// Активное состояние фильтра для карты
+const activateMapFilter = () => {
+  filterForm.classList.remove('map__filters--disabled');
+  setEnabled(mapFormBlocks);
+};
+
 export {
-  adForm,
   disablePage,
-  activatePage
+  activateAd,
+  activateMapFilter
 };
