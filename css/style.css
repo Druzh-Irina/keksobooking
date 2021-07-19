@@ -288,7 +288,8 @@ fieldset {
           align-items: center;
 }
 
-.ad-form-header__preview {
+.ad-form-header__preview,
+.ad-form__photo-preview {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -297,7 +298,6 @@ fieldset {
           align-items: center;
 
   margin-right: 10px;
-  padding: 0 15px;
 
   width: 70px;
   height: 70px;
@@ -570,17 +570,6 @@ fieldset {
   color: #ff5635;
   -webkit-box-shadow: 0 0 2px 2px #ff6547;
           box-shadow: 0 0 2px 2px #ff6547;
-}
-
-.ad-form__photo {
-  margin-right: 10px;
-  margin-bottom: 10px;
-
-  width: 70px;
-  height: 70px;
-
-  background-color: #e4e4de;
-  border-radius: 5px;
 }
 
 .ad-form__element--submit {
