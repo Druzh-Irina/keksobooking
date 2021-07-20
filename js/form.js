@@ -1,8 +1,8 @@
 import {
-  mainPin,
-  map,
   CENTER_TOKYO,
-  ZOOM_MAP
+  ZOOM_MAP,
+  mainPin,
+  map
 } from './map.js';
 
 import {
@@ -13,6 +13,11 @@ import {
   showSuccessModal,
   showErrorModal
 } from './popup.js';
+
+import {
+  avatarPreviewForm,
+  photoPreviewForm
+} from './toggle-page-state.js';
 
 const MIN_PRICE_OF_TYPE = {
   bungalow: '0',
@@ -29,9 +34,11 @@ const ROOM_CAPACITY = {
   100: [0],
 };
 
-const MIN_TITLE_LENGTH = 30;
-const MAX_TITLE_LENGTH = 100;
-const MAX_PRICE_OF_TYPE = 1000000;
+const IMG_DEFAULT = {
+  DESCRIPTION: 'Фото',
+  SRC: 'img/muffin-grey.svg',
+};
+
 const COORDINATE_ROUNDING = 5;
 
 
@@ -49,11 +56,13 @@ const resetButton = adForm.querySelector('.ad-form__reset');
 
 // Извещения-балуны о вводе допустимого кол-ва символов в поле «Заголовок объявления»
 const getTitleChange = () => {
-  const title = titleForm.value.length;
-  if (title < MIN_TITLE_LENGTH) {
-    titleForm.setCustomValidity(`Напишите ещё ${MIN_TITLE_LENGTH - title} символов`);
-  } else if (title > MAX_TITLE_LENGTH) {
-    titleForm.setCustomValidity(`Вы указали ${title - MAX_TITLE_LENGTH} лишних символов`);
+  const title = titleForm.value;
+  if (titleForm.validity.tooShort) {
+    titleForm.setCustomValidity(`Напишите ещё ${titleForm.minLength - title.length} символов`);
+  } else if (titleForm.validity.tooLong) {
+    titleForm.setCustomValidity(`Вы указали ${title.length - titleForm.maxLength} лишних символов`);
+  } else if (titleForm.validity.valueMissing) {
+    titleForm.setCustomValidity('Обязательное поле для заполнения!');
   } else {
     titleForm.setCustomValidity('');
   }
@@ -66,16 +75,15 @@ const getTypeChange = () => {
   priceForm.min = MIN_PRICE_OF_TYPE[typeForm.value];
 };
 
-// Извещения-балуны об указании допустимой цены в поле «Цена за ночь»
-const getPriceChange = () => {
-  const price = priceForm.value;
-  const type = typeForm.value;
-  const minPrice = MIN_PRICE_OF_TYPE[type];
-
-  if (price < minPrice) {
-    priceForm.setCustomValidity(`Укажите стоимость не ниже ${minPrice}`);
-  } else if (price > MAX_PRICE_OF_TYPE) {
-    priceForm.setCustomValidity(`Укажите стоимость не выше ${MAX_PRICE_OF_TYPE}`);
+// // Извещения-балуны об указании допустимой цены в поле «Цена за ночь»
+const getPriceChange = (evt) => {
+  const target = evt.target;
+  if (target.validity.rangeUnderflow) {
+    priceForm.setCustomValidity(`Укажите стоимость не ниже ${target.min}`);
+  } else if (target.validity.rangeOverflow) {
+    priceForm.setCustomValidity(`Укажите стоимость не выше ${target.max}`);
+  } else if (target.validity.valueMissing) {
+    priceForm.setCustomValidity('Обязательное поле для заполнения!');
   } else {
     priceForm.setCustomValidity('');
   }
@@ -131,10 +139,20 @@ mainPin.on('move', (evt) => {
   getAddressCoordinates(evt.target);
 });
 
+const resetPictures = () => {
+  avatarPreviewForm.src = IMG_DEFAULT.SRC;
+  photoPreviewForm.src = IMG_DEFAULT.SRC;
+};
+
 // Форма и карта переходят в изначальное состояние
-const setDefaultState = () => {
+const onResetForm = () => {
   adForm.reset();
   filterForm.reset();
+  resetPictures();
+
+  const pricePlaceholder = '1000';
+  priceForm.placeholder = pricePlaceholder;
+
   mainPin.setLatLng(
     CENTER_TOKYO,
   );
@@ -147,7 +165,7 @@ const setDefaultState = () => {
 // Нажатие на кнопку "очистить" (reset-форма)
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
-  setDefaultState();
+  onResetForm();
 });
 
 // Отправить объявления по кнопке "опубликовать" (submit-форма)
@@ -156,6 +174,6 @@ adForm.addEventListener('submit', (evt) => {
   const formData = new FormData(evt.target);
   sendData(() => {
     showSuccessModal();
-    setDefaultState();
+    onResetForm();
   }, showErrorModal, formData);
 });

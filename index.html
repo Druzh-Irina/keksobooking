@@ -77,7 +77,7 @@
           <legend class="ad-form-header__title">Ваша фотография (для карты)</legend>
           <div class="ad-form-header__upload">
             <div class="ad-form-header__preview">
-              <img src="img/muffin-grey.svg" alt="Аватар пользователя" width="40" height="44">
+              <img src="img/muffin-grey.svg" alt="Аватар пользователя" width="70" height="70">
             </div>
             <div class="ad-form__field">
               <input type="file" id="avatar" name="avatar" class="ad-form-header__input visually-hidden" accept="image/png, image/jpeg">
@@ -106,7 +106,7 @@
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="price">Цена за ночь, руб.</label>
-          <input id="price" name="price" type="number" max="1000000" placeholder="5000" required>
+          <input id="price" name="price" type="number" min="0" max="1000000" placeholder="1000" required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--time">
           <label class="ad-form__label" for="timein">Время заезда и выезда</label>
@@ -166,6 +166,9 @@
               <label for="images" class="ad-form__drop-zone">Загрузить<br>фото...</label>
             </div>
             <div class="ad-form__photo"></div>
+              <div class="ad-form__photo-preview">
+                <img src="img/muffin-grey.svg" alt="Фотография жилья" width="70" height="70">
+              </div>
           </div>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--submit">
