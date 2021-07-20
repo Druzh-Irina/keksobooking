@@ -2,7 +2,8 @@ import {
   CENTER_TOKYO,
   ZOOM_MAP,
   mainPin,
-  map
+  map,
+  removePins
 } from './map.js';
 
 import {
@@ -15,9 +16,8 @@ import {
 } from './popup.js';
 
 import {
-  avatarPreviewForm,
-  photoPreviewForm
-} from './toggle-page-state.js';
+  resetPictures
+} from './pictures.js';
 
 const MIN_PRICE_OF_TYPE = {
   bungalow: '0',
@@ -34,13 +34,7 @@ const ROOM_CAPACITY = {
   100: [0],
 };
 
-const IMG_DEFAULT = {
-  DESCRIPTION: 'Фото',
-  SRC: 'img/muffin-grey.svg',
-};
-
 const COORDINATE_ROUNDING = 5;
-
 
 const filterForm = document.querySelector('.map__filters');
 const adForm = document.querySelector('.ad-form');
@@ -131,7 +125,7 @@ const getAddressCoordinates = (marker) => {
   const lng = marker.getLatLng().lng.toFixed(COORDINATE_ROUNDING);
   addressForm.value = `${lat} ${lng}`;
 };
-// Получение изначальное значение поля с координатами центра Токио
+// Получение изначального значения поля с координатами центра Токио
 getAddressCoordinates(mainPin);
 
 // Определение координат при передвижения метки по карте
@@ -139,16 +133,12 @@ mainPin.on('move', (evt) => {
   getAddressCoordinates(evt.target);
 });
 
-const resetPictures = () => {
-  avatarPreviewForm.src = IMG_DEFAULT.SRC;
-  photoPreviewForm.src = IMG_DEFAULT.SRC;
-};
-
 // Форма и карта переходят в изначальное состояние
 const onResetForm = () => {
   adForm.reset();
   filterForm.reset();
   resetPictures();
+  removePins();
 
   const pricePlaceholder = '1000';
   priceForm.placeholder = pricePlaceholder;

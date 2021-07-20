@@ -1,19 +1,9 @@
-import {
-  renderPhoto
-} from './pictures.js';
-
 const filterForm = document.querySelector('.map__filters');
 const adForm = document.querySelector('.ad-form');
 
 // fieldset и select в формах ".ad-form" и ".map__filters"
 const mapFormBlocks = filterForm.children;
 const adFormBlocks = adForm.children;
-
-// Фото
-const avatarForm = adForm.querySelector('.ad-form-header__input');
-const avatarPreviewForm = adForm.querySelector('.ad-form-header__preview img');
-const photoForm = adForm.querySelector('.ad-form__input');
-const photoPreviewForm = adForm.querySelector('.ad-form__photo-preview img');
 
 // Блокировка полей в формах
 const setDisabled = (elements) => {
@@ -39,12 +29,10 @@ const setEnabled = (elements) => {
   }
 };
 
-// Активное состояние формы "Ваше объявление" и события с фото
+// Активное состояние формы "Ваше объявление"
 const activateAd = () => {
   adForm.classList.remove('ad-form--disabled');
   setEnabled(adFormBlocks);
-  avatarForm.addEventListener('change', () => renderPhoto(avatarForm, avatarPreviewForm));
-  photoForm.addEventListener('change', () => renderPhoto(photoForm, photoPreviewForm));
 };
 
 
@@ -55,8 +43,6 @@ const activateMapFilter = () => {
 };
 
 export {
-  avatarPreviewForm,
-  photoPreviewForm,
   disablePage,
   activateAd,
   activateMapFilter
