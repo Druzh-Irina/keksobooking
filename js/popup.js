@@ -13,8 +13,8 @@ const showSuccessModal = () => {
     if (isEscEvent(evt)) {
       evt.preventDefault();
       successPopup.remove();
+      document.removeEventListener('keydown', keydownHandler);
     }
-    document.removeEventListener('keydown', keydownHandler);
   };
   document.addEventListener('keydown', keydownHandler);
   successPopup.addEventListener('click', () => {
@@ -30,8 +30,8 @@ const showErrorModal = () => {
     if (isEscEvent(evt)) {
       evt.preventDefault();
       errorPopup.remove();
+      document.removeEventListener('keydown', keydownHandler);
     }
-    document.removeEventListener('keydown', keydownHandler);
   };
   document.addEventListener('keydown', keydownHandler);
   closeErrorButton.addEventListener('click', () => {
