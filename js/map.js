@@ -124,7 +124,5 @@ export {
   getMap,
   mainPin,
   map,
-  addPinOnMap,
-  renderPins,
   removePins
 };
