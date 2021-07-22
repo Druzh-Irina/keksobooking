@@ -1,6 +1,6 @@
-const isEscEvent = (evt) => evt.key === ('Escape' || 'Esc');
+const DELAY = 500;
 
-const debounce = (callback, timeoutDelay = 500) => {
+const debounce = (callback, timeoutDelay = DELAY) => {
   let timeoutId;
   return (...rest) => {
     clearTimeout(timeoutId);
@@ -8,7 +8,9 @@ const debounce = (callback, timeoutDelay = 500) => {
   };
 };
 
+const isEscEvent = (evt) => evt.keyCode === 27 || evt.key === 'Escape' || evt.key === 'Esc';
+
 export {
-  isEscEvent,
-  debounce
+  debounce,
+  isEscEvent
 };
