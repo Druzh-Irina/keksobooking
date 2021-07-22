@@ -19,6 +19,7 @@ import {
   debounce
 } from './util.js';
 
+// @ts-ignore
 const L = window.L;
 const ZOOM_MAP = 12;
 const SIMILAR_AD_COUNT = 10;

@@ -1,6 +1,6 @@
 const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
-const IMG_DEFAULT = {
+const ImageSetting = {
   DESCRIPTION: 'Фото',
   SRC: 'img/muffin-grey.svg',
 };
@@ -34,8 +34,8 @@ renderPhoto(avatarForm, avatarPreviewForm);
 renderPhoto(photoForm, photoPreviewForm);
 
 const resetPictures = () => {
-  avatarPreviewForm.src = IMG_DEFAULT.SRC;
-  photoPreviewForm.src = IMG_DEFAULT.SRC;
+  avatarPreviewForm.src = ImageSetting.SRC;
+  photoPreviewForm.src = ImageSetting.SRC;
 };
 
 export {
