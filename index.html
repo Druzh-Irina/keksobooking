@@ -80,7 +80,7 @@
               <img src="img/muffin-grey.svg" alt="Аватар пользователя" width="70" height="70">
             </div>
             <div class="ad-form__field">
-              <input type="file" id="avatar" name="avatar" class="ad-form-header__input visually-hidden" accept="image/png, image/jpeg">
+              <input type="file" id="avatar" name="avatar" class="ad-form-header__input visually-hidden" accept="image/png, image/jpeg, image/svg">
               <label class="ad-form-header__drop-zone" for="avatar">Загрузить<br>фото...</label>
             </div>
             <p class="ad-form-header__info">Заполните все обязательные поля, назначьте цену, загрузите аватар и фото жилья. Придумайте интересное описание. Оно сделает объявление более живым и привлекательным. Получившееся объявление должно давать гостям полное представление о вашем жилье.</p>
@@ -88,7 +88,7 @@
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="title">Заголовок объявления</label>
-          <input id="title" name="title" type="text" minlength="30" maxlength="100" placeholder="Милая, уютная квартирка в центре Токио" required>
+          <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио" minlength="30" maxlength="100" required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="address">Адрес (координаты)</label>
@@ -96,7 +96,7 @@
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="type">Тип жилья</label>
-          <select id="type" name="type">
+          <select id="type" name="type" required>
             <option value="bungalow">Бунгало</option>
             <option value="flat" selected>Квартира</option>
             <option value="hotel">Отель</option>
@@ -106,7 +106,7 @@
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="price">Цена за ночь, руб.</label>
-          <input id="price" name="price" type="number" min="0" max="1000000" placeholder="1000" required>
+          <input id="price" name="price" type="number" placeholder="1000" min="1000" max="1000000" required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--time">
           <label class="ad-form__label" for="timein">Время заезда и выезда</label>
@@ -135,7 +135,7 @@
           <select id="capacity" name="capacity">
             <option value="1" selected>для 1 гостя</option>
             <option value="2">для 2 гостей</option>
-            <option value="3">для 3 гостей</option>
+            <option value="3" >для 3 гостей</option>
             <option value="0">не для гостей</option>
           </select>
         </fieldset>
@@ -166,9 +166,6 @@
               <label for="images" class="ad-form__drop-zone">Загрузить<br>фото...</label>
             </div>
             <div class="ad-form__photo"></div>
-              <div class="ad-form__photo-preview">
-                <img src="img/muffin-grey.svg" alt="Фотография жилья" width="70" height="70">
-              </div>
           </div>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--submit">
@@ -234,7 +231,8 @@
     </div>
   </template>
 
+  <script src="leaflet/leaflet.js"></script>
+<script type="module" src="js/main.js">
+</script>
 </body>
-<script src="leaflet/leaflet.js"></script>
-<script type="module" src="./js/main.js"></script>
 </html>

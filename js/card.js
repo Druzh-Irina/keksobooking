@@ -58,7 +58,10 @@ const createPhotos = (photos) => {
 const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
 
 // Функция клонирует и заполняет шаблон cardTemplate
-const renderCard = ({author, offer}) => {
+const renderCard = ({
+  author,
+  offer,
+}) => {
   const card = cardTemplate.cloneNode(true);
 
   card.querySelector('.popup__avatar').src = author.avatar || '';

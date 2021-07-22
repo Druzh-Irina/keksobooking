@@ -1,23 +1,27 @@
 import {
-  CENTER_TOKYO,
-  ZOOM_MAP,
-  mainPin,
-  map,
-  removePins
+  resetPage
 } from './map.js';
-
 import {
   sendData
 } from './server.js';
-
+import {
+  mapFilters,
+  mapFiltersList
+} from './filter.js';
 import {
   showSuccessModal,
   showErrorModal
 } from './popup.js';
-
 import {
-  resetPictures
+  renderPhoto
 } from './pictures.js';
+
+const IMG_WIDTH = 70;
+const IMG_HEIGHT = 70;
+const MIN_LENGTH = 30;
+const MAX_LENGTH = 100;
+const MAX_PRICE = 1000000;
+const COORDINATE_ROUNDING = 5;
 
 const MIN_PRICE_OF_TYPE = {
   bungalow: '0',
@@ -26,12 +30,10 @@ const MIN_PRICE_OF_TYPE = {
   house: '5000',
   palace: '10000',
 };
-const MAX_PRICE = 1000000;
-const PRICE_PLACEHOLDER = '1000';
-const COORDINATE_ROUNDING = 5;
 
-const filterForm = document.querySelector('.map__filters');
 const adForm = document.querySelector('.ad-form');
+const adFormList = adForm.children;
+// Для валидации
 const titleForm = adForm.querySelector('#title');
 const typeForm = adForm.querySelector('#type');
 const priceForm = adForm.querySelector('#price');
@@ -40,18 +42,25 @@ const timeOutForm = adForm.querySelector('#timeout');
 const roomForm = adForm.querySelector('#room_number');
 const capacityForm = adForm.querySelector('#capacity');
 const addressForm = adForm.querySelector('#address');
-const resetButton = adForm.querySelector('.ad-form__reset');
+const adFormReset = adForm.querySelector('.ad-form__reset');
+// Для фотографий
+const adFormAvatar = document.querySelector('.ad-form-header__preview');
+const adFormPhoto = document.querySelector('.ad-form__photo');
+const avatarPreview = adFormAvatar.querySelector('img').cloneNode(true);
+const avatarChooser = adForm.querySelector('#avatar');
+const photoChooser = adForm.querySelector('#images');
 
 // Извещения-балуны о вводе допустимого кол-ва символов в поле «Заголовок объявления»
 const onTitleValueInput = () => {
-  const title = titleForm.value;
-  if (titleForm.validity.tooShort) {
-    titleForm.setCustomValidity(`Напишите ещё ${titleForm.minLength - title.length} символов`);
-  } else if (titleForm.validity.tooLong) {
-    titleForm.setCustomValidity(`Вы указали ${title.length - titleForm.maxLength} лишних символов`);
-  } else if (titleForm.validity.valueMissing) {
-    titleForm.setCustomValidity('Обязательное поле для заполнения!');
+  const titleLength = titleForm.value.length;
+  if (titleLength < MIN_LENGTH) {
+    titleForm.style.borderColor = 'red';
+    titleForm.setCustomValidity(`Напишите ещё ${MIN_LENGTH - titleLength} символов`);
+  } else if (titleLength > MAX_LENGTH) {
+    titleForm.style.borderColor = 'red';
+    titleForm.setCustomValidity(`Вы указали ${titleLength - MAX_LENGTH} лишних символов`);
   } else {
+    titleForm.style.borderColor = 'white';
     titleForm.setCustomValidity('');
   }
   titleForm.reportValidity();
@@ -65,42 +74,28 @@ const onTypeChange = () => {
 
 // Извещения-балуны об указании допустимой цены в поле «Цена за ночь»
 const onPriceValueInput = () => {
-  const value = priceForm.value;
-  if (value > MAX_PRICE) {
-    priceForm.setCustomValidity(`Максимальная цена за ночь превышена на ${value - MAX_PRICE}руб.`);
+  const valuePrice = priceForm.value;
+  if (valuePrice < MIN_PRICE_OF_TYPE[typeForm.value]) {
+    priceForm.style.borderColor = 'red';
+  } else if (valuePrice > MAX_PRICE) {
+    priceForm.style.borderColor = 'red';
+    priceForm.setCustomValidity(`Максимальная цена за ночь ${MAX_PRICE}.`);
   } else {
+    priceForm.style.borderColor = 'white';
     priceForm.setCustomValidity('');
   }
   priceForm.reportValidity();
 };
 
-const onPriceValueChange = () => {
-  if (typeForm.value === 'bungalow') {
-    priceForm.placeholder = '0';
-  } else if (typeForm.value === 'flat') {
-    priceForm.placeholder = '1000';
-    priceForm.min = '1000';
-  } else if (typeForm.value === 'hotel') {
-    priceForm.placeholder = '3000';
-    priceForm.min = '3000';
-  } else if (typeForm.value === 'house') {
-    priceForm.placeholder = '5000';
-    priceForm.min = '5000';
-  } else if (typeForm.value === 'palace') {
-    priceForm.placeholder = '10000';
-    priceForm.min = '10000';
-  }
-};
-onPriceValueChange();
 
 // Поле «Время заезда» синхронизированно изменят значение «Время выезда»
-const onTimeInChange = (evt) => {
-  timeOutForm.value = evt.target.value;
+const onTimeInChange = () => {
+  timeOutForm.value = timeInForm.value;
 };
 
 // Поле «Время выезда» синхронизированно изменят значение «Время заезда»
-const onTimeOutChange = (evt) => {
-  timeInForm.value = evt.target.value;
+const onTimeOutChange = () => {
+  timeInForm.value = timeOutForm.value;
 };
 
 // Поле «Количество комнат» вводит ограничения на количество гостей в поле «Количество мест»
@@ -122,58 +117,97 @@ const onRoomsChange = () => {
 titleForm.addEventListener('input', onTitleValueInput);
 typeForm.addEventListener('change', onTypeChange);
 priceForm.addEventListener('input', onPriceValueInput);
-typeForm.addEventListener('change', onPriceValueChange);
 timeInForm.addEventListener('change', onTimeInChange);
-timeOutForm.addEventListener('change',onTimeOutChange);
+timeOutForm.addEventListener('change', onTimeOutChange);
 roomForm.addEventListener('change', onRoomsChange);
 capacityForm.addEventListener('change', onRoomsChange);
 
 // Передача координат главной метки в поле "Адрес (координаты)"
-addressForm.readOnly = true;
-const getAddressCoordinates = (marker) => {
-  const lat = marker.getLatLng().lat.toFixed(COORDINATE_ROUNDING);
-  const lng = marker.getLatLng().lng.toFixed(COORDINATE_ROUNDING);
-  addressForm.value = `${lat} ${lng}`;
+const getAddressCoordinates = (coordinates) => {
+  addressForm.value = `${(coordinates.lat).toFixed(COORDINATE_ROUNDING)}, ${(coordinates.lng).toFixed(COORDINATE_ROUNDING)}`;
 };
-// Получение изначального значения поля с координатами центра Токио
-getAddressCoordinates(mainPin);
 
-// Определение координат при передвижения метки по карте
-mainPin.on('move', (evt) => {
-  getAddressCoordinates(evt.target);
-});
+// Создать превью аватара (Ваша фотография)
+const getAvatar = (result) => {
+  const fragment = document.createDocumentFragment();
+  avatarPreview.src = result;
+  fragment.appendChild(avatarPreview);
+  adFormAvatar.innerHTML = '';
+  adFormAvatar.appendChild(fragment);
+};
 
-// Форма и карта переходят в изначальное состояние
-const onResetForm = () => {
-  adForm.reset();
-  filterForm.reset();
-  resetPictures();
-  removePins();
+// Создать превью фотографии жилья
+const getPhoto = (result) => {
+  adFormPhoto.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  const element = document.createElement('img');
+  element.src = result;
+  element.alt = 'Фото жилья';
+  element.width = IMG_WIDTH;
+  element.height = IMG_HEIGHT;
+  fragment.appendChild(element);
+  adFormPhoto.appendChild(fragment);
+};
 
-  priceForm.placeholder = PRICE_PLACEHOLDER;
+const getAvatarPreview = () => renderPhoto(avatarChooser, getAvatar);
+const getPhotoPreview = () => renderPhoto(photoChooser, getPhoto);
 
-  mainPin.setLatLng(
-    CENTER_TOKYO,
-  );
-  map.setView(
-    CENTER_TOKYO,
-    ZOOM_MAP);
-  getAddressCoordinates(mainPin);
+getAvatarPreview();
+getPhotoPreview();
+
+// Неактивное состояние страницы: формы "Ваше объявление" и фильтра для карты
+const disablePage = () => {
+  adForm.classList.add('ad-form--disabled');
+  for (const elem of adFormList) {
+    elem.setAttribute('disabled', 'disabled');
+  }
+  mapFilters.classList.add('map__filters--disabled');
+  for (const elem of mapFiltersList) {
+    elem.setAttribute('disabled', 'disabled');
+  }
+};
+
+// Активное состояние формы "Ваше объявление"
+const activateAd = () => {
+  adForm.classList.remove('ad-form--disabled');
+  for (const elem of adFormList) {
+    elem.removeAttribute('disabled');
+  }
+};
+
+// Отправка объявления по кнопке "опубликовать" (submit-форма)
+const publishFormSubmit = (cb) => {
+  adForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const formData = new FormData(evt.target);
+    sendData(
+      () => {
+        showSuccessModal();
+        resetPage();
+        cb();
+      },
+      showErrorModal,
+      formData);
+  });
 };
 
 // Нажатие на кнопку "очистить" (reset-форма)
-resetButton.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  onResetForm();
-});
+const onButtonReset = (cb) => {
+  adFormReset.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    resetPage();
+    cb();
+  });
+};
 
-// Отправить объявления по кнопке "опубликовать" (submit-форма)
-adForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  // @ts-ignore
-  const formData = new FormData(evt.target);
-  sendData(() => {
-    showSuccessModal();
-    onResetForm();
-  }, showErrorModal, formData);
-});
+export {
+  disablePage,
+  activateAd,
+  getAddressCoordinates,
+  publishFormSubmit,
+  adForm,
+  onTypeChange,
+  onButtonReset,
+  avatarPreview,
+  adFormPhoto
+};
