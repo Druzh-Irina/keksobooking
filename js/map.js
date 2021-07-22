@@ -1,28 +1,23 @@
 import {
+  activateAd,
+  getAddressCoordinates,
+  adForm,
+  onTypeChange
+} from './form.js';
+import {
   renderCard
 } from './card.js';
 import {
-  activateAd,
-  activateMapFilter
-} from './toggle-page-state.js';
-import {
-  getData
-} from './server.js';
-import {
-  showAlert
-} from './show-alert.js';
-import {
-  checkAllFilters,
-  changeFilters
+  mapFilters
 } from './filter.js';
 import {
-  debounce
-} from './util.js';
+  avatarPreview,
+  adFormPhoto
+} from './form.js';
 
-// @ts-ignore
 const L = window.L;
 const ZOOM_MAP = 12;
-const SIMILAR_AD_COUNT = 10;
+const IMG_DEFAULT = 'img/muffin-grey.svg';
 
 const CENTER_TOKYO = {
   lat: 35.69034,
@@ -51,13 +46,12 @@ const LeafletParameters = {
 // Отображение карты
 const map = L.map('map-canvas');
 
-const getMap = (cb) => {
+const getMap = () => {
   map.on('load', () => {
-    cb();
+    activateAd(), // При успешной загрузке карты форма "Ваше объявление" переключается в активное состояние
+    getAddressCoordinates(CENTER_TOKYO);
   })
-    .setView(
-      CENTER_TOKYO,
-      ZOOM_MAP);
+    .setView(CENTER_TOKYO, ZOOM_MAP);
 
   // добавление open source изображения на созданную карту
   L.tileLayer(
@@ -77,53 +71,56 @@ const mainPin = L.marker(
 
 mainPin.addTo(map);
 
-const markers = [];
-
-// Создание меток с объявлениями
-const addPinOnMap = (place) => {
-  const marker = L.marker({
-    lat: place.location.lat,
-    lng: place.location.lng,
-  }, {
-    icon: PIN_AD,
-  });
-
-  marker.addTo(map).bindPopup(renderCard(place), // привязывает балун-объявление к метке
-    {
-      keepInView: true, //карта автоматически перемещается, если всплывающий балун-объявление не помещается и вылезает за границы
-    },
-  );
-  markers.push(marker);
-};
-
-// Отображение меток на карте не более 10 штук
-const renderPins = (places) => {
-  places.slice(0, SIMILAR_AD_COUNT).forEach((place) => {
-    addPinOnMap(place);
-  });
-};
-
-const removePins = () => {
-  markers.forEach((marker) => marker.remove());
-};
-
-getMap(() => {
-  activateAd(); // При успешной загрузке карты форма "Ваше объявление" переключается в активное состояние
-  getData((places) => {
-    renderPins(places);
-    changeFilters(debounce(() => {
-      removePins();
-      renderPins(checkAllFilters(places));
-    }));
-    activateMapFilter(); // При успешной загрузке карты фильтр для карты переключается в активное состояние
-  }, (error) => showAlert(error));
+// Определение координат при передвижении метки по карте
+const mainMarkerCoordinates = () => mainPin.on('move', (evt) => {
+  const points = evt.target.getLatLng();
+  getAddressCoordinates(points);
 });
 
+// Создание слоя с группой меток
+const markerGroup = L.layerGroup().addTo(map);
+
+// Создание меток с объявлениями
+const createPinMarker = (data) => {
+  const pinMarker = L.marker(
+    data.location, {
+      icon: PIN_AD,
+    },
+  );
+
+  pinMarker
+    .addTo(markerGroup)
+    .bindPopup(
+      renderCard(data), // привязывает балун-объявление к метке
+      {
+        keepInView: true, //карта автоматически перемещается, если всплывающий балун-объявление не помещается и вылезает за границы
+      },
+    );
+};
+
+// Очищение слоя с метками объявлений
+const clearMarker = () => markerGroup.clearLayers();
+
+// Форма и карта переходят в дефолтное состояние
+const resetPage = () => {
+  mainPin.setLatLng(CENTER_TOKYO);
+  map.setView(CENTER_TOKYO, ZOOM_MAP);
+  adForm.reset();
+  avatarPreview.src = IMG_DEFAULT;
+  adFormPhoto.innerHTML = '';
+  const adFormInputs = adForm.querySelectorAll('input');
+  adFormInputs.forEach((input) => input.style.borderColor = '');
+  const resetMainPinMarker = mainPin.getLatLng();
+  getAddressCoordinates(resetMainPinMarker);
+  onTypeChange();
+  mapFilters.reset();
+  clearMarker();
+};
+
 export {
-  CENTER_TOKYO,
-  ZOOM_MAP,
   getMap,
-  mainPin,
-  map,
-  removePins
+  createPinMarker,
+  mainMarkerCoordinates,
+  resetPage,
+  clearMarker
 };
