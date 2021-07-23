@@ -56,49 +56,22 @@ const checkFeatures = (ad) => Array.from(featuresFilter)
     return ad.offer.features.includes(filterFeature.value);
   });
 
-
-// // Раньше было так:
-
-// // Отфильтрованные объявления
-// const checkAllFilters = (ads) =>
-//   ads
-//     .slice()
-//     .filter((ad) => (checkType(ad) && checkPrice(ad) && checkRooms(ad) && checkGuests(ad) && checkFeatures(ad)))
-//     .slice(0, SIMILAR_AD_COUNT)
-//     .forEach((ad) => createPinMarker(ad));
-
-// // Перерисовка карты
-// const changeFilters = (cb) => {
-//   mapFilters.addEventListener('change', () => {
-//     clearMarker(),
-//     cb();
-//   });
-// };
-
-
-// // Стало так:
-
 // Отфильтрованные объявления
 const checkAllFilters = (ads)  => {
   const filteredData = [];
   for (let i = 0; i < ads.length; i++) {
     const ad = ads[i];
-    const filteredByType = checkType(ad);
-    const filteredByPrice = checkPrice(ad);
-    const filteredByRooms = checkRooms(ad);
-    const filteredByGuests = checkGuests(ad);
-    const filteredByFeatures = checkFeatures(ad);
     if (
-      filteredByType &&
-      filteredByPrice &&
-      filteredByRooms &&
-      filteredByGuests &&
-      filteredByFeatures
+      checkType(ad) &&
+      checkPrice(ad) &&
+      checkRooms(ad) &&
+      checkGuests(ad) &&
+      checkFeatures(ad)
     ) {
+      createPinMarker(ad);
       filteredData.push(ad);
     }
     if (filteredData.length === SIMILAR_AD_COUNT) {
-      createPinMarker(ad);
       break;
     }
   }
