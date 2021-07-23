@@ -101,14 +101,19 @@ const onTimeOutChange = () => {
 // Поле «Количество комнат» вводит ограничения на количество гостей в поле «Количество мест»
 const onRoomsChange = () => {
   if (roomForm.value === '1' && capacityForm.value !== '1') {
+    capacityForm.style.borderColor = 'red';
     capacityForm.setCustomValidity('В 1 комнате возможно разместить только 1 гостя');
   } else if (roomForm.value === '2' && capacityForm.value !== '1' && capacityForm.value !== '2') {
+    capacityForm.style.borderColor = 'red';
     capacityForm.setCustomValidity('В 2 комнатах возможно разместить только от 1 до 2 гостей');
   } else if (roomForm.value === '3' && capacityForm.value === '0') {
+    capacityForm.style.borderColor = 'red';
     capacityForm.setCustomValidity('В 3 комнатах возможно разместить только от 1 до 3 гостей');
   } else if (roomForm.value === '100' && capacityForm.value !== '0') {
+    capacityForm.style.borderColor = 'red';
     capacityForm.setCustomValidity('100 комнат не для гостей');
   } else {
+    capacityForm.style.borderColor = 'white';
     capacityForm.setCustomValidity('');
   }
   capacityForm.reportValidity();
